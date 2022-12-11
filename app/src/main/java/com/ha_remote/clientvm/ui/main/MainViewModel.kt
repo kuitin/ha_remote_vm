@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 class MainViewModel : ViewModel() {
     // TODO: Implement the ViewModel
     var inputTitle: String  = "defaultUndervalue"
+    var isSuccess: Boolean  = true
 
 
 }
