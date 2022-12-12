@@ -6,6 +6,7 @@
     tools:context=".ui.main.MainFragment">
     <data>
     </data>
+
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
