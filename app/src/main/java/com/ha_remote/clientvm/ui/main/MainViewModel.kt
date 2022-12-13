@@ -8,10 +8,10 @@ import androidx.lifecycle.ViewModel
 
 class MainViewModel :  ViewModel(), Observable {
     @Bindable
-    var inputTitle  = MutableLiveData<String> ()
+    var inputTitle  : MutableLiveData<String> = MutableLiveData("title")
 
     @Bindable
-    var success = MutableLiveData<Boolean> ()
+    var success : MutableLiveData<Boolean> = MutableLiveData(true)
 
     public fun onClick()
     {
