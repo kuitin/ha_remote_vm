@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ha_remote.clientvm.R
 import com.ha_remote.clientvm.databinding.EntitiesItemBinding
-class EntitiesAdaptater (val items : MutableList<EntitieData>)
+class EntitiesAdaptater (val items : MutableList<EntitieViewModel>)
     : RecyclerView.Adapter<EntitiesAdaptater.ViewHolder>() {
     private lateinit var binding : EntitiesItemBinding
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
@@ -23,10 +23,10 @@ class EntitiesAdaptater (val items : MutableList<EntitieData>)
 
     inner class ViewHolder(itemView: EntitiesItemBinding) : RecyclerView.ViewHolder(itemView.root){
         // TODO Use dynamic binding
-        fun bind(item : EntitieData){
+        fun bind(item : EntitieViewModel){
             binding.apply {
-                 name.text=item.name
-                value.text=item.value
+                 name.text=item.name.value
+                value.text= item.value.value.toString()
             }
         }
     }

@@ -6,16 +6,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ha_remote.clientvm.databinding.ActivityMainBinding
-import com.ha_remote.clientvm.ui.main.EntitieData
-import com.ha_remote.clientvm.ui.main.EntitiesAdaptater
-import com.ha_remote.clientvm.ui.main.MainFragment
-import com.ha_remote.clientvm.ui.main.MainViewModel
+import com.ha_remote.clientvm.ui.main.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var homeBinding: ActivityMainBinding
-    private var nameList : MutableList<EntitieData> = mutableListOf()
+    private var nameList : MutableList<EntitieViewModel> = mutableListOf()
     private lateinit var sampleAdapter: EntitiesAdaptater
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,12 +36,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
-        nameList.add(EntitieData("1","Sample Title"))
-        nameList.add(EntitieData("2","Sample 1"))
-        nameList.add(EntitieData("3","Sample 2"))
-        nameList.add(EntitieData("4","Sample 3"))
-        nameList.add(EntitieData("5","Sample 4"))
-        nameList.add(EntitieData("6","Sample 5"))
+        nameList.add(EntitieViewModel("1","Sample Title"))
+        nameList.add(EntitieViewModel("2","Sample 1"))
+        nameList.add(EntitieViewModel("3","Sample 2"))
+        nameList.add(EntitieViewModel("4","Sample 3"))
+        nameList.add(EntitieViewModel("5","Sample 4"))
+        nameList.add(EntitieViewModel("6","Sample 5"))
     }
 }
 
