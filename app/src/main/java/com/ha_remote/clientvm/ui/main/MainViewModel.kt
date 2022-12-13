@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel :  ViewModel(), Observable {
-    // TODO: Implement the ViewModel
     @Bindable
     var inputTitle  = MutableLiveData<String> ()
 
@@ -29,5 +28,7 @@ class MainViewModel :  ViewModel(), Observable {
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
         callbacks.remove(callback)
     }
+
+
 
 }

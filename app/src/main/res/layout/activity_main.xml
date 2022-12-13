@@ -32,6 +32,13 @@
             android:layout_height="wrap_content"
             android:onClick="@{() -> username.onClick()}"
             android:text="Button" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rvMain"
+            app:layout_constraintTop_toTopOf="@id/button"
+            app:layout_constraintStart_toStartOf="@id/button"/>
     </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
