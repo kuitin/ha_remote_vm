@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewmodel"
-            type="com.ha_remote.clientvm.ui.main.EntitieViewModel" />
+            type="com.ha_remote.clientvm.ui.main.AbstractViewModel.EntitiesViewModel" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
@@ -32,6 +32,12 @@
         tools:layout_editor_absoluteY="0dp"
         tools:ignore="MissingConstraints"
         android:text="@{viewmodel.value}" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rvList"
+        app:layout_constraintTop_toTopOf="@id/value"
+        app:layout_constraintStart_toStartOf="@id/value"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

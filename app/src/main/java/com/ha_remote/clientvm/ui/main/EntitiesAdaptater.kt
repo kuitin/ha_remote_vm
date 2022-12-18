@@ -1,59 +1,65 @@
 package com.ha_remote.clientvm.ui.main
 
-import android.R
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.ha_remote.clientvm.databinding.EntitiesItemBinding
+import com.ha_remote.clientvm.R
 
-
-class EntitiesAdaptater(val items: MutableList<EntitieViewModel>)
-    : RecyclerView.Adapter<EntitiesAdaptater.ViewHolder>() {
+class EntitiesAdaptater(val items: MutableList<AbstractViewModel>)
+    : RecyclerView.Adapter<HomeRecyclerViewHolder>() {
     private lateinit var binding : EntitiesItemBinding
-    private var dataModelList: List<EntitieViewModel>? = null
+    private var dataModelList: List<AbstractViewModel>? = null
     private var context: Context? = null
-    fun MyRecyclerViewAdapter(dataModelList1: List<EntitieViewModel>, ctx: Context) {
+
+
+    fun MyRecyclerViewAdapter(dataModelList1: List<AbstractViewModel>, ctx: Context) {
         dataModelList = dataModelList1
         context = ctx
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
-    {
-        val inflater =LayoutInflater.from(parent.context)
-        binding=EntitiesItemBinding.inflate(inflater,parent,false)
 
-//        notifyDataSetChanged
-        return ViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeRecyclerViewHolder {
+        return when (viewType) {
+            R.layout.entities_item -> HomeRecyclerViewHolder.EntitieArrayViewHolder(
+                EntitiesItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+            else -> throw IllegalArgumentException("Invalid ViewType Provided")
+        }
     }
 
-    public fun updateViewmodel()
-    {
-        notifyDataSetChanged()
-    }
     override fun getItemCount(): Int {
         return (items.size ?: 0) as Int;
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//        items.elementAt(position)?.let { holder.bind(it)
-            val viewmodel = items[position]
-            holder.binding.viewmodel = viewmodel
-//        val dataModel: EntitieViewModel = items.get(position)
-//        holder.bind(dataModel)
-//        holder.itemRowBinding.setItemClickListener(this)
+    override fun onBindViewHolder(holder: HomeRecyclerViewHolder, position: Int) {
+        when(holder){
+            is HomeRecyclerViewHolder.EntitieArrayViewHolder -> holder.bind(items[position] as AbstractViewModel.EntitiesViewModel)
         }
-    inner class ViewHolder(val binding: EntitiesItemBinding) : RecyclerView.ViewHolder(binding.root)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when(items[position]){
+            is AbstractViewModel.EntitiesViewModel -> R.layout.entities_item
+        }
+    }
 
 
-//    inner class ViewHolder(itemView: EntitiesItemBinding) : RecyclerView.ViewHolder(itemView.root){
-//        // TODO Use dynamic binding
-//        fun bind(item: EntitieViewModel){
-//            binding.apply { viewmodel = item
-//            }
-//            binding.executePendingBindings()
-////            notifyDataSetChanged()
-//        }
+}
 
+sealed class HomeRecyclerViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
+    class EntitieArrayViewHolder(private val binding: EntitiesItemBinding) : HomeRecyclerViewHolder(binding){
+        fun bind(item: AbstractViewModel.EntitiesViewModel){
+            binding.apply { viewmodel = item
+//                rvList = adapter
+            }
+            binding.executePendingBindings()
+        }
+    }
 }

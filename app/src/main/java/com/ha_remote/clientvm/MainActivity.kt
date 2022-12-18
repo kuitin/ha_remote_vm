@@ -7,14 +7,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ha_remote.clientvm.databinding.ActivityMainBinding
 import com.ha_remote.clientvm.ui.main.*
-import com.ha_remote.clientvm.ui.main.tools.MutableListLiveData
+import com.ha_remote.clientvm.ui.main.AbstractViewModel
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var homeBinding: ActivityMainBinding
-    private var nameListof : MutableList<EntitieViewModel> = mutableListOf()
-//    private var  nameListof : MutableListLiveData<EntitieViewModel> = MutableListLiveData()
+    private var nameListof : MutableList<AbstractViewModel> = mutableListOf()
 
     private lateinit var sampleAdapter: EntitiesAdaptater
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +27,7 @@ class MainActivity : AppCompatActivity() {
             this.username = mainViewModel
             this.rvMain.apply {
                 layoutManager= LinearLayoutManager(this@MainActivity)
+                setHasFixedSize(true)
                 adapter=sampleAdapter
             }}
         // For RecyclerView
@@ -39,22 +39,25 @@ class MainActivity : AppCompatActivity() {
 //        nameListof.observe(owner, this::onListChanged(items, size);
         mainViewModel.success.observe(this) { data ->
             if(data == false) {
-                nameListof.add(EntitieViewModel("test", "button clicked"))
-                nameListof[0].name.value= "11"
+//                nameListof.add(EntitieViewModel("test", "button clicked"))
+//                nameListof[0].name.value= "11"
+                val temp = nameListof[0] as AbstractViewModel.EntitiesViewModel
+                temp.name.value= "11"
             }
-            sampleAdapter.updateViewmodel()
+            sampleAdapter.notifyItemChanged(0)
+//            sampleAdapter.updateViewmodel()
         }
     }
     private fun onListChanged(items: List<Int>, size: Int) {
         // Do Something
     }
     private fun loadData() {
-        nameListof.add(EntitieViewModel("1","Sample Title"))
-        nameListof.add(EntitieViewModel("2","Sample 1"))
-        nameListof.add(EntitieViewModel("3","Sample 2"))
-        nameListof.add(EntitieViewModel("4","Sample 3"))
-        nameListof.add(EntitieViewModel("5","Sample 4"))
-        nameListof.add(EntitieViewModel("6","Sample 5"))
+        nameListof.add(AbstractViewModel.EntitiesViewModel("1", "Sample Title"))
+        nameListof.add(AbstractViewModel.EntitiesViewModel("2","Sample 1"))
+        nameListof.add(AbstractViewModel.EntitiesViewModel("3","Sample 2"))
+        nameListof.add(AbstractViewModel.EntitiesViewModel("4","Sample 3"))
+        nameListof.add(AbstractViewModel.EntitiesViewModel("5","Sample 4"))
+        nameListof.add(AbstractViewModel.EntitiesViewModel("6","Sample 5"))
     }
 }
 

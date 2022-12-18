@@ -6,14 +6,9 @@ import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class EntitieViewModel(s: String, s1: String) :  ViewModel(), Observable {
-    @Bindable
-    var name : MutableLiveData<String> = MutableLiveData(s)
+sealed class AbstractViewModel(): ViewModel(), Observable {
 
-    @Bindable
-    var value : MutableLiveData<String> = MutableLiveData(s1)
-
-    private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry()}
+    private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }
 
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
         callbacks.add(callback)
@@ -22,7 +17,14 @@ class EntitieViewModel(s: String, s1: String) :  ViewModel(), Observable {
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
         callbacks.remove(callback)
     }
+    class EntitiesViewModel(s: String, s1: String) : AbstractViewModel() {
+        @Bindable
+        var name : MutableLiveData<String> = MutableLiveData(s)
+
+        @Bindable
+        var value : MutableLiveData<String> = MutableLiveData(s1)
 
 
 
+    }
 }
