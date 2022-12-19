@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var homeBinding: ActivityMainBinding
     private var nameListof : MutableList<AbstractViewModel> = mutableListOf()
-
+    private var sensors = mutableListOf<AbstractViewModel>()
     private lateinit var sampleAdapter: EntitiesAdaptater
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +50,8 @@ class MainActivity : AppCompatActivity() {
 //                nameListof.add(EntitieViewModel("test", "button clicked"))
 //                nameListof[0].name.value= "11"
                 val temp = nameListof[0] as AbstractViewModel.EntitiesViewModel
-                temp.name.value= "11"
+                var temp2 = temp.sensorsList[0] as AbstractViewModel.EntitieRowViewModel
+                temp2.name.value= "11"
             }
             sampleAdapter.notifyItemChanged(0)
 //            sampleAdapter.updateViewmodel()
@@ -60,10 +61,10 @@ class MainActivity : AppCompatActivity() {
         // Do Something
     }
     private fun loadData() {
-        var sensors = mutableListOf<AbstractViewModel>()
         sensors.add(AbstractViewModel.EntitieRowViewModel("1231", "sensor qde"))
+        sensors.add(AbstractViewModel.EntitieRowViewModel("1232", "sensor qde 2"))
         nameListof.add(AbstractViewModel.EntitiesViewModel("1", "Sample Title", sensors))
-//        nameListof.add(AbstractViewModel.EntitiesViewModel("2","Sample 1"))
+        nameListof.add(AbstractViewModel.EntitiesViewModel("2","Sample 1"))
 //        nameListof.add(AbstractViewModel.EntitiesViewModel("3","Sample 2"))
 //        nameListof.add(AbstractViewModel.EntitiesViewModel("4","Sample 3"))
 //        nameListof.add(AbstractViewModel.EntitiesViewModel("5","Sample 4"))
