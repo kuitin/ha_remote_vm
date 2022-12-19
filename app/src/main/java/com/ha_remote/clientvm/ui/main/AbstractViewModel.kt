@@ -17,12 +17,25 @@ sealed class AbstractViewModel(): ViewModel(), Observable {
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
         callbacks.remove(callback)
     }
-    class EntitiesViewModel(s: String, s1: String) : AbstractViewModel() {
+    class EntitiesViewModel(s: String, s1: String, s3 : MutableList<AbstractViewModel> = mutableListOf()) : AbstractViewModel() {
         @Bindable
         var name : MutableLiveData<String> = MutableLiveData(s)
 
         @Bindable
         var value : MutableLiveData<String> = MutableLiveData(s1)
+
+        @Bindable
+        var sensorsList : MutableList<AbstractViewModel> = s3
+
+
+    }
+    class EntitieRowViewModel(s: String, s1: String) : AbstractViewModel() {
+        @Bindable
+        var name : MutableLiveData<String> = MutableLiveData(s)
+
+        @Bindable
+        var value : MutableLiveData<String> = MutableLiveData(s1)
+
 
 
 

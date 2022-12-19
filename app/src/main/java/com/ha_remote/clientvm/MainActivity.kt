@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ha_remote.clientvm.databinding.ActivityMainBinding
+import com.ha_remote.clientvm.databinding.EntitiesItemBinding
 import com.ha_remote.clientvm.ui.main.*
 import com.ha_remote.clientvm.ui.main.AbstractViewModel
 
@@ -30,6 +31,13 @@ class MainActivity : AppCompatActivity() {
                 setHasFixedSize(true)
                 adapter=sampleAdapter
             }}
+//        DataBindingUtil.setContentView<EntitiesItemBinding?>(this, R.layout.activity_main)
+//            .apply { this.lifecycleOwner = this@MainActivity
+//                rvList.apply {
+//                    layoutManager= LinearLayoutManager(this@MainActivity)
+//                    setHasFixedSize(true)
+//                    adapter=SensorsAdaptater(item.sensorsList)
+//                }}
         // For RecyclerView
 //        if (savedInstanceState == null) {
 //            supportFragmentManager.beginTransaction()
@@ -52,12 +60,14 @@ class MainActivity : AppCompatActivity() {
         // Do Something
     }
     private fun loadData() {
-        nameListof.add(AbstractViewModel.EntitiesViewModel("1", "Sample Title"))
-        nameListof.add(AbstractViewModel.EntitiesViewModel("2","Sample 1"))
-        nameListof.add(AbstractViewModel.EntitiesViewModel("3","Sample 2"))
-        nameListof.add(AbstractViewModel.EntitiesViewModel("4","Sample 3"))
-        nameListof.add(AbstractViewModel.EntitiesViewModel("5","Sample 4"))
-        nameListof.add(AbstractViewModel.EntitiesViewModel("6","Sample 5"))
+        var sensors = mutableListOf<AbstractViewModel>()
+        sensors.add(AbstractViewModel.EntitieRowViewModel("1231", "sensor qde"))
+        nameListof.add(AbstractViewModel.EntitiesViewModel("1", "Sample Title", sensors))
+//        nameListof.add(AbstractViewModel.EntitiesViewModel("2","Sample 1"))
+//        nameListof.add(AbstractViewModel.EntitiesViewModel("3","Sample 2"))
+//        nameListof.add(AbstractViewModel.EntitiesViewModel("4","Sample 3"))
+//        nameListof.add(AbstractViewModel.EntitiesViewModel("5","Sample 4"))
+//        nameListof.add(AbstractViewModel.EntitiesViewModel("6","Sample 5"))
     }
 }
 
