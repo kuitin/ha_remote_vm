@@ -27,6 +27,11 @@ sealed class AbstractViewModel(): ViewModel(), Observable {
         @Bindable
         var sensorsList : MutableList<AbstractViewModel> = s3
 
+        fun FillViewModelDatas()
+        {
+
+        }
+
 
     }
     class EntitieRowViewModel(s: String, s1: String) : AbstractViewModel() {

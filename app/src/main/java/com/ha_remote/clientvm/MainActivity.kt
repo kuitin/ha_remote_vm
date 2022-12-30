@@ -1,14 +1,20 @@
 package com.ha_remote.clientvm
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.foregroundservice.ForegroundService
 import com.ha_remote.clientvm.databinding.ActivityMainBinding
-import com.ha_remote.clientvm.databinding.EntitiesItemBinding
-import com.ha_remote.clientvm.ui.main.*
 import com.ha_remote.clientvm.ui.main.AbstractViewModel
+import com.ha_remote.clientvm.ui.main.EntitiesAdaptater
+import com.ha_remote.clientvm.ui.main.MainViewModel
+import com.ha_remote.clientvm.ui.main.PCloud
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sampleAdapter: EntitiesAdaptater
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val policy = ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
         val mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
         loadData()
 
@@ -51,8 +60,16 @@ class MainActivity : AppCompatActivity() {
 //                nameListof[0].name.value= "11"
                 val temp = nameListof[0] as AbstractViewModel.EntitiesViewModel
                 var temp2 = temp.sensorsList[0] as AbstractViewModel.EntitieRowViewModel
+                var pcloud = PCloud ()
+                var response = pcloud.Login()
                 temp2.name.value= "11"
+                this.startService(Intent(this, ForegroundService::class.java))
+
+
+                //Schedule Alarm Receiver in Main Activity
+
             }
+//            ForegroundService.stopService(this)
             sampleAdapter.notifyItemChanged(0)
 //            sampleAdapter.updateViewmodel()
         }
@@ -70,5 +87,6 @@ class MainActivity : AppCompatActivity() {
 //        nameListof.add(AbstractViewModel.EntitiesViewModel("5","Sample 4"))
 //        nameListof.add(AbstractViewModel.EntitiesViewModel("6","Sample 5"))
     }
+
 }
 
