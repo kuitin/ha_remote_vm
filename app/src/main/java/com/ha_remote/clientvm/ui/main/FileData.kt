@@ -23,10 +23,10 @@ object DateSerializer : KSerializer<Date> {
     override fun serialize(encoder: Encoder, value: Date) = encoder.encodeString(value.toString())
 
     override fun deserialize(decoder: Decoder): Date {
-//        var temp = decoder.decodeString()
+        var temp = decoder.decodeString()
         var local_datef = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-//        val d = local_datef.parse(temp)
-        return local_datef.parse(decoder.decodeString())
+        val d = local_datef.parse(temp)
+        return d
     }
 }
 

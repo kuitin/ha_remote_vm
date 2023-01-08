@@ -5,6 +5,7 @@ import androidx.databinding.Observable
 import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.util.*
 
 sealed class AbstractViewModel(): ViewModel(), Observable {
 
@@ -34,12 +35,15 @@ sealed class AbstractViewModel(): ViewModel(), Observable {
 
 
     }
-    class EntitieRowViewModel(s: String, s1: String) : AbstractViewModel() {
+    class EntitieRowViewModel(s: String,s1: String, s2: Date) : AbstractViewModel() {
         @Bindable
         var name : MutableLiveData<String> = MutableLiveData(s)
 
         @Bindable
         var value : MutableLiveData<String> = MutableLiveData(s1)
+
+        @Bindable
+        var date : MutableLiveData<String> = MutableLiveData(s2.toString())
 
 
 

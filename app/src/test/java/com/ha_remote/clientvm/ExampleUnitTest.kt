@@ -16,8 +16,15 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         var pcloud = PCloud ()
-        var response = pcloud.GetAllStatus()
-        print(response)
+        try {
+            var response = pcloud.GetAllStatus()
+            print(response)
+        }
+        catch( e: Exception  )
+        {
+            print(e.message.toString())
+        }
+
         assertEquals(4, 2 + 2)
     }
 

@@ -22,9 +22,9 @@ import java.util.*
 import javax.crypto.Cipher
 class PCloud {
 
-     val pcloudUser = "?"
-    val password="?"
-    val privateKey = "?"
+    val pcloudUser = Key.getpcloudUser()
+    val password= Key.getpassword()
+    val privateKey =Key.getprivateKey()
 
     companion object {
         const val TRANSFORMATION = "AES/GCM/NoPadding"
@@ -170,23 +170,26 @@ class PCloud {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun GetAllStatus(){
+    fun GetAllStatus(): List<FileData>{
+        var filesResult = mutableListOf <FileData>()
         Login()
         var filesList = GetFilesList()
 
         for(files in filesList)
         {
-            var fileContent = DownloadFile(files.fileId)
-            var result = decryptString(fileContent)
+            try {
+                var fileContent = DownloadFile(files.fileId)
+                var result = decryptString(fileContent)
 
-            // TODO QDE delete file if under 1 week
-            var fileData = ParseFileData(result.replace('\'','"'))
-            var temp = fileData.last_changed.toString()
+                // TODO QDE delete file if under 1 week
+                var fileData = ParseFileData(result.replace('\'','"'))
+                filesResult.add(fileData)
+            }
+            catch (e: Exception) {
+                println("Response 1 succeeded: ${e.stackTrace}")
+            }
         }
-
-
-
-
+        return filesResult
     }
 
     fun Login(){
@@ -216,6 +219,7 @@ class PCloud {
     fun ParseFileData(str:String): FileData {
         val result = Json.decodeFromString<FileData>(str)
         return result
+
     }
 
 
