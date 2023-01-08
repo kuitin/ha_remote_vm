@@ -13,4 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
-/app/src/main/java/com/ha_remote/clientvm/ui/main/Key.kt
+app/src/main/java/com/ha_remote/clientvm/ui/main/Key.kt
