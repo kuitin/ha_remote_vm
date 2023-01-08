@@ -14,3 +14,5 @@
 .cxx
 local.properties
 app/src/main/java/com/ha_remote/clientvm/ui/main/Key.kt
+app/release/app-release.apk
+app/release/output-metadata.json
