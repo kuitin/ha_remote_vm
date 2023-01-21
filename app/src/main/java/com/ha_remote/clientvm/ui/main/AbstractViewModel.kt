@@ -1,12 +1,15 @@
 package com.ha_remote.clientvm.ui.main
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import java.util.*
-
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 sealed class AbstractViewModel(): ViewModel(), Observable {
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }
@@ -35,15 +38,16 @@ sealed class AbstractViewModel(): ViewModel(), Observable {
 
 
     }
-    class EntitieRowViewModel(s: String,s1: String, s2: Date) : AbstractViewModel() {
+    class EntitieRowViewModel(s: String,s1: String, s2: String) : AbstractViewModel() {
         @Bindable
         var name : MutableLiveData<String> = MutableLiveData(s)
 
         @Bindable
         var value : MutableLiveData<String> = MutableLiveData(s1)
 
+        @RequiresApi(Build.VERSION_CODES.O)
         @Bindable
-        var date : MutableLiveData<String> = MutableLiveData(s2.toString())
+        var date : MutableLiveData<String> = MutableLiveData(s2)
 
 
 

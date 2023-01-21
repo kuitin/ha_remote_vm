@@ -5,11 +5,9 @@ import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.pcloud.sdk.*
-import com.pcloud.sdk.Call
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
 import org.json.JSONObject
 import java.io.IOException
 import java.lang.reflect.Type
@@ -20,6 +18,9 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.crypto.Cipher
+import com.ha_remote.clientvm.ui.main.tools.UserAgentInterceptor
+import java.time.temporal.ChronoUnit
+
 class PCloud {
 
     val pcloudUser = Key.getpcloudUser()
@@ -33,8 +34,10 @@ class PCloud {
         const val TAG = "KeyStoreManager"
     }
 
-    private val mclient = OkHttpClient()
-    val JSON = "application/json; charset=utf-8".toMediaType()
+
+    private val mclient : OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(UserAgentInterceptor("APPMobileBDD"))
+        .build()
 
 
 
@@ -124,7 +127,6 @@ class PCloud {
             val request = Request.Builder()
                 .url("https://eapi.pcloud.com/listfolder?folderid=0&recursive=0&iconformat=id&getkey=1&getpublicfolderlink=1")
                 .get()
-                .addHeader("User-Agent", "OkHttp Bot")
                 .build()
 
             var  strResult : String
@@ -150,7 +152,6 @@ class PCloud {
             var request = Request.Builder()
                 .url("https://eapi.pcloud.com/gettextfile")
                 .post(formBody)
-                .addHeader("User-Agent", "OkHttp Bot")
                 .build()
 
             var  strResult : String
@@ -181,7 +182,6 @@ class PCloud {
                 var fileContent = DownloadFile(files.fileId)
                 var result = decryptString(fileContent)
 
-                // TODO QDE delete file if under 1 week
                 var fileData = ParseFileData(result.replace('\'','"'))
                 filesResult.add(fileData)
             }
@@ -222,5 +222,54 @@ class PCloud {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun RemoveFilesBeforeDate(days: Long)
+    {
+        var filesResult = mutableListOf <FileInfo>()
+        Login()
+        var filesList = GetFilesList()
+        val currentDate = LocalDate.now()
+        for(files in filesList)
+        {
+            try {
+                var fileContent = DownloadFile(files.fileId)
+                var result = decryptString(fileContent)
+
+                var fileData = ParseFileData(result.replace('\'','"'))
+
+                val threeDaysAgo = currentDate.minus(days, ChronoUnit.DAYS)
+                if( threeDaysAgo.isAfter(fileData.last_changed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
+                    filesResult.add(files)
+                }
+            }
+            catch (e: Exception) {
+                println("Response 1 succeeded: ${e.stackTrace}")
+            }
+        }
+        RemoveFiles(filesResult)
+    }
+
+    fun RemoveFiles(files:List<FileInfo>) {
+        for(file in files)
+        {
+            try {
+                val formBody = FormBody.Builder()
+                    .add("fileid", file.fileId)
+                    .build()
+                val request = Request.Builder()
+                    .url("https://eapi.pcloud.com/deletefile")
+                    .post(formBody)
+                    .build()
+
+                var  strResult : String
+                mclient.newCall(request).execute().use { response ->
+                    strResult = response.body!!.string()
+                }
+            }
+            catch (e: Exception) {
+                println("failed RemoveFiles ${file.name}: ${e.stackTrace}")
+            }
+        }
+    }
 
 }

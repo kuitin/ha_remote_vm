@@ -25,6 +25,7 @@ object DateSerializer : KSerializer<Date> {
     override fun deserialize(decoder: Decoder): Date {
         var temp = decoder.decodeString()
         var local_datef = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+        local_datef.setTimeZone(TimeZone.getTimeZone("GMT"));
         val d = local_datef.parse(temp)
         return d
     }

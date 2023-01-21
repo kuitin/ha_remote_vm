@@ -13,6 +13,26 @@ import java.nio.charset.StandardCharsets
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
+
+    @Test
+    fun sorted_date_isCorrect() {
+        var pcloud = PCloud ()
+        try {
+            var response = pcloud.GetAllStatus()
+            var distinctSensor = response.sortedByDescending { it.last_changed }.distinctBy { it.name }
+//            var distinctSensor2 = response.last()
+            var distinctSensor2 = response.filter { it.name == "Bedroom_window" }.last()
+            var distinctSensor3 = response.filter { it.name == "Bedroom_window" }
+            print(distinctSensor)
+        }
+        catch( e: Exception  )
+        {
+            print(e.message.toString())
+        }
+
+        assertEquals(4, 2 + 2)
+    }
+
     @Test
     fun addition_isCorrect() {
         var pcloud = PCloud ()
