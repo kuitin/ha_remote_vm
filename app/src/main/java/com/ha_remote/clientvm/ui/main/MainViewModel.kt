@@ -20,9 +20,14 @@ class MainViewModel :  ViewModel(), Observable {
     @Bindable
     var unableCleanButton : MutableLiveData<Boolean> = MutableLiveData(true)
 
+    @Bindable
+    var enableAlarmButton : MutableLiveData<Boolean> = MutableLiveData(true)
+
     val updateButtonAction = ActionLiveData<String>()
 
     val cleanButtonAction = ActionLiveData<String>()
+
+    val enableAlarmButtonAction = ActionLiveData<String>()
 
     @RequiresApi(Build.VERSION_CODES.O)
     public fun onClick()
@@ -46,6 +51,19 @@ class MainViewModel :  ViewModel(), Observable {
 
         unableCleanButton.value = true
     }
+
+    public fun onClickEnableAlarmButton()
+    {
+        enableAlarmButton.value = false
+        enableAlarmButtonAction.sendAction("hello")
+
+    }
+
+    public fun enableEnableAlarmButton() {
+
+        enableAlarmButton.value = true
+    }
+
 
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry()}

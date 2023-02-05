@@ -1,5 +1,6 @@
 package com.ha_remote.clientvm
 
+import android.app.AlarmManager
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -7,6 +8,7 @@ import android.os.StrictMode.ThreadPolicy
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ha_remote.clientvm.databinding.ActivityMainBinding
@@ -16,10 +18,13 @@ import com.ha_remote.clientvm.ui.main.cryptage.EnCryptor
 import com.ha_remote.clientvm.ui.main.cryptage.SaveDatas
 import kotlinx.coroutines.*
 import java.io.File
-import androidx.lifecycle.Observer
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import android.widget.Toast
+import android.content.Intent
+import android.app.PendingIntent
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -106,6 +111,24 @@ class MainActivity : AppCompatActivity() {
                 }
 
         }
+
+        mainViewModel.enableAlarmButtonAction.observe(this) { data ->
+            try {
+                startAlert()
+                scope.launch(Dispatchers.Default ) {
+
+                    withContext(Dispatchers.Main) {
+                        mainViewModel.enableEnableAlarmButton()
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error alarm: ${e.stackTrace}")
+                Log.e("Alarm Bell", "Alarm error : ${e.stackTrace}")
+                mainViewModel.enableEnableAlarmButton()
+            }
+        }
+
+
     }
 
     private fun InitilazViewItem() {
@@ -197,6 +220,21 @@ class MainActivity : AppCompatActivity() {
         }
         // refresh view
         sampleAdapter.notifyDataSetChanged()
+    }
+
+    fun startAlert() {
+        val i = 5
+        val intent = Intent(this, MyBroadcastReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this.applicationContext, 100,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                + i * 1000, AlarmManager.INTERVAL_HALF_HOUR,pendingIntent)
+        Toast.makeText(this, "Alarm set in $i seconds", Toast.LENGTH_LONG).show()
+        Log.d("Alarm Bell", "Alarm is set")
     }
 
 }

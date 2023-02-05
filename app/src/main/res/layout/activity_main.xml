@@ -41,6 +41,14 @@
             android:enabled="@{username.unableCleanButton}"
             android:text="Clean" />
 
+        <Button
+            android:id="@+id/button_enable_alarm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> username.onClickEnableAlarmButton()}"
+            android:enabled="@{username.enableAlarmButton}"
+            android:text="Enable Alarm" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
