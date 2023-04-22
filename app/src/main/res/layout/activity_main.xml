@@ -45,9 +45,17 @@
             android:id="@+id/button_enable_alarm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="@{() -> username.onClickEnableAlarmButton()}"
             android:enabled="@{username.enableAlarmButton}"
+            android:onClick="@{() -> username.onClickEnableAlarmButton()}"
             android:text="Enable Alarm" />
+
+        <Button
+            android:id="@+id/button_disable_alarm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="@{username.disableAlarmButton}"
+            android:onClick="@{() -> username.onClickDisableAlarmButton()}"
+            android:text="Disable Alarm" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

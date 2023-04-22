@@ -1,16 +1,24 @@
 package com.ha_remote.clientvm
 
+
+import UpdateDataSensorWorker
 import android.app.AlarmManager
+import android.app.Notification
+import android.app.PendingIntent
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.*
 import com.ha_remote.clientvm.databinding.ActivityMainBinding
 import com.ha_remote.clientvm.ui.main.*
 import com.ha_remote.clientvm.ui.main.cryptage.DeCryptor
@@ -21,10 +29,9 @@ import java.io.File
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
-import android.widget.Toast
-import android.content.Intent
-import android.app.PendingIntent
-import android.util.Log
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,7 +41,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sampleAdapter: EntitiesAdaptater
     val scope = CoroutineScope(Job() + Dispatchers.Main)
     private var saveDatas : SaveDatas? = null
-
+    private var m_alarmmanager: AlarmManager  ? = null
+    private var m_pendingIntent: PendingIntent ? = null
+    private var WORKER_ID = "APP_WORKER_QD11448"
     protected fun shouldAskPermissions(): Boolean {
         return Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1
     }
@@ -125,6 +134,23 @@ class MainActivity : AppCompatActivity() {
                 println("Error alarm: ${e.stackTrace}")
                 Log.e("Alarm Bell", "Alarm error : ${e.stackTrace}")
                 mainViewModel.enableEnableAlarmButton()
+            }
+        }
+
+        mainViewModel.disableAlarmButtonAction.observe(this) { data ->
+            try {
+                stopAlert()
+                scope.launch(Dispatchers.Default ) {
+
+                    withContext(Dispatchers.Main) {
+                        mainViewModel.enableDisableAlarmButton()
+                        mainViewModel.enableEnableAlarmButton()
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error alarm: ${e.stackTrace}")
+                Log.e("Alarm Bell", "Alarm error : ${e.stackTrace}")
+                mainViewModel.enableDisableAlarmButton()
             }
         }
 
@@ -223,18 +249,82 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startAlert() {
-        val i = 5
-        val intent = Intent(this, MyBroadcastReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            this.applicationContext, 100,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                + i * 1000, AlarmManager.INTERVAL_HALF_HOUR,pendingIntent)
-        Toast.makeText(this, "Alarm set in $i seconds", Toast.LENGTH_LONG).show()
-        Log.d("Alarm Bell", "Alarm is set")
+        try {
+            if(!isWorkScheduled(WORKER_ID)) {
+                startPeriodicWorker()
+                Toast.makeText(this, "Alarm set in 15 minutes", Toast.LENGTH_LONG).show()
+                Log.d("Alarm Bell", "Alarm is set")
+            }
+            else
+            {
+                Toast.makeText(this, "Alarm was already set", Toast.LENGTH_LONG).show()
+                Log.d("Alarm Bell", "Alarm was already set")
+            }
+        } catch (e: ExecutionException ) {
+            e.printStackTrace();
+        } catch (e:InterruptedException ) {
+            e.printStackTrace();
+        }
+    }
+
+    private fun isWorkScheduled(tag: String): Boolean {
+        val instance = WorkManager.getInstance(this)
+        val statuses = instance.getWorkInfosByTag(tag)
+        return try {
+            var running = false
+            val workInfoList = statuses.get()
+            for (workInfo in workInfoList) {
+                val state = workInfo.state
+                running = (state == WorkInfo.State.RUNNING)  || (state == WorkInfo.State.ENQUEUED)
+            }
+            running
+        } catch (e: ExecutionException) {
+            e.printStackTrace()
+            false
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    private fun startPeriodicWorker(){
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+            .build()
+
+        val myRequest = PeriodicWorkRequest.Builder(
+            UpdateDataSensorWorker::class.java,
+            15,
+            TimeUnit.MINUTES
+        ).setConstraints(constraints)
+            .addTag(WORKER_ID)
+            .build()
+
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork(
+                WORKER_ID,
+                ExistingPeriodicWorkPolicy.KEEP,
+                myRequest
+            )
+    }
+
+    private fun getNotification(content: String): Notification? {
+        val builder: NotificationCompat.Builder =
+            NotificationCompat.Builder(this, "default")
+        builder.setContentTitle("Scheduled Notification")
+        builder.setContentText(content)
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground)
+        builder.setAutoCancel(true)
+        builder.setChannelId("10001")
+        return builder.build()
+    }
+
+    fun stopAlert() {
+        m_alarmmanager!!.cancel(m_pendingIntent);
+        Toast.makeText(this, "Alarm has been disabled", Toast.LENGTH_LONG).show()
+        Log.d("disable Alarm Bell", "Alarm is disable")
+        m_alarmmanager = null;
     }
 
 }

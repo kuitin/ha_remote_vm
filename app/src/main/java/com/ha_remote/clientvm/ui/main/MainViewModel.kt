@@ -23,11 +23,16 @@ class MainViewModel :  ViewModel(), Observable {
     @Bindable
     var enableAlarmButton : MutableLiveData<Boolean> = MutableLiveData(true)
 
+    @Bindable
+    var disableAlarmButton : MutableLiveData<Boolean> = MutableLiveData(true)
+
     val updateButtonAction = ActionLiveData<String>()
 
     val cleanButtonAction = ActionLiveData<String>()
 
     val enableAlarmButtonAction = ActionLiveData<String>()
+
+    val disableAlarmButtonAction = ActionLiveData<String>()
 
     @RequiresApi(Build.VERSION_CODES.O)
     public fun onClick()
@@ -62,6 +67,19 @@ class MainViewModel :  ViewModel(), Observable {
     public fun enableEnableAlarmButton() {
 
         enableAlarmButton.value = true
+    }
+
+    public fun onClickDisableAlarmButton()
+    {
+        disableAlarmButton.value = false
+        enableAlarmButton.value = false
+        disableAlarmButtonAction.sendAction("hello")
+
+    }
+
+    public fun enableDisableAlarmButton() {
+
+        disableAlarmButton.value = true
     }
 
 
