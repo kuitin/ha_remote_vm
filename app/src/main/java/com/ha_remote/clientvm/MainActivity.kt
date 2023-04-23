@@ -1,7 +1,7 @@
 package com.ha_remote.clientvm
 
 
-import UpdateDataSensorWorker
+import CleanDataWorker
 import android.app.AlarmManager
 import android.app.Notification
 import android.app.PendingIntent
@@ -41,8 +41,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sampleAdapter: EntitiesAdaptater
     val scope = CoroutineScope(Job() + Dispatchers.Main)
     private var saveDatas : SaveDatas? = null
-    private var m_alarmmanager: AlarmManager  ? = null
-    private var m_pendingIntent: PendingIntent ? = null
     private var WORKER_ID = "APP_WORKER_QD11448"
     protected fun shouldAskPermissions(): Boolean {
         return Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1
@@ -126,7 +124,6 @@ class MainActivity : AppCompatActivity() {
             try {
                 startAlert()
                 scope.launch(Dispatchers.Default ) {
-
                     withContext(Dispatchers.Main) {
                         mainViewModel.enableEnableAlarmButton()
                     }
@@ -314,7 +311,7 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val myRequest = PeriodicWorkRequest.Builder(
-            UpdateDataSensorWorker::class.java,
+            CleanDataWorker::class.java,
             3,
             TimeUnit.DAYS
         ).setConstraints(constraints)
@@ -341,10 +338,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun stopAlert() {
-        m_alarmmanager!!.cancel(m_pendingIntent);
-        Toast.makeText(this, "Alarm has been disabled", Toast.LENGTH_LONG).show()
-        Log.d("disable Alarm Bell", "Alarm is disable")
-        m_alarmmanager = null;
     }
 
 }

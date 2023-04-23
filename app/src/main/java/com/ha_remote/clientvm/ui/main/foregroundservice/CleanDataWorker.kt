@@ -5,7 +5,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.ha_remote.clientvm.ui.main.PCloud
 
-class UpdateDataSensorWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
+class CleanDataWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun doWork(): Result {
         uploadUserData()
