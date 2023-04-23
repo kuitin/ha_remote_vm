@@ -119,6 +119,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
+
         }
 
         mainViewModel.enableAlarmButtonAction.observe(this) { data ->
@@ -153,6 +154,7 @@ class MainActivity : AppCompatActivity() {
                 mainViewModel.enableDisableAlarmButton()
             }
         }
+        startAutoClean()
 
 
     }
@@ -267,6 +269,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun startAutoClean() {
+        try {
+            if(!isWorkScheduled(WORKER_ID)) {
+                startPeriodicWorker()
+                Toast.makeText(this, "Alarm set in 15 minutes", Toast.LENGTH_LONG).show()
+                Log.d("Alarm Bell", "Alarm is set")
+            }
+            else
+            {
+                Toast.makeText(this, "Alarm was already set", Toast.LENGTH_LONG).show()
+                Log.d("Alarm Bell", "Alarm was already set")
+            }
+        } catch (e: ExecutionException ) {
+            e.printStackTrace();
+        } catch (e:InterruptedException ) {
+            e.printStackTrace();
+        }
+    }
     private fun isWorkScheduled(tag: String): Boolean {
         val instance = WorkManager.getInstance(this)
         val statuses = instance.getWorkInfosByTag(tag)
@@ -295,8 +315,8 @@ class MainActivity : AppCompatActivity() {
 
         val myRequest = PeriodicWorkRequest.Builder(
             UpdateDataSensorWorker::class.java,
-            15,
-            TimeUnit.MINUTES
+            3,
+            TimeUnit.DAYS
         ).setConstraints(constraints)
             .addTag(WORKER_ID)
             .build()
