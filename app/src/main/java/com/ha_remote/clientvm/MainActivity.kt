@@ -2,9 +2,9 @@ package com.ha_remote.clientvm
 
 
 import CleanDataWorker
-import android.app.AlarmManager
-import android.app.Notification
-import android.app.PendingIntent
+import android.annotation.SuppressLint
+import android.app.*
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -312,7 +312,7 @@ class MainActivity : AppCompatActivity() {
 
         val myRequest = PeriodicWorkRequest.Builder(
             CleanDataWorker::class.java,
-            3,
+            1,
             TimeUnit.DAYS
         ).setConstraints(constraints)
             .addTag(WORKER_ID)
@@ -324,6 +324,11 @@ class MainActivity : AppCompatActivity() {
                 ExistingPeriodicWorkPolicy.KEEP,
                 myRequest
             )
+    }
+
+    private fun stopPeriodicWorker() {
+        WorkManager.getInstance(this)
+            .cancelUniqueWork(WORKER_ID)
     }
 
     private fun getNotification(content: String): Notification? {
@@ -338,6 +343,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun stopAlert() {
+        stopPeriodicWorker()
     }
 
 }

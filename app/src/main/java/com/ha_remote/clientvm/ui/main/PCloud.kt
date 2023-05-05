@@ -20,6 +20,7 @@ import java.util.*
 import javax.crypto.Cipher
 import com.ha_remote.clientvm.ui.main.tools.UserAgentInterceptor
 import java.time.temporal.ChronoUnit
+import com.ha_remote.clientvm.ui.main.exceptions.PcloudException
 
 class PCloud {
 
@@ -222,6 +223,7 @@ class PCloud {
 
     }
 
+    @Throws(PcloudException::class)
     @RequiresApi(Build.VERSION_CODES.O)
     fun RemoveFilesBeforeDate(days: Long)
     {
@@ -243,12 +245,13 @@ class PCloud {
                 }
             }
             catch (e: Exception) {
-                println("Response 1 succeeded: ${e.stackTrace}")
+                throw PcloudException("Failed collect all file: ${e.stackTrace}")
             }
         }
         RemoveFiles(filesResult)
     }
 
+    @Throws(PcloudException::class)
     fun RemoveFiles(files:List<FileInfo>) {
         for(file in files)
         {
@@ -267,7 +270,7 @@ class PCloud {
                 }
             }
             catch (e: Exception) {
-                println("failed RemoveFiles ${file.name}: ${e.stackTrace}")
+                throw PcloudException("failed RemoveFiles ${file.name}: ${e.stackTrace}")
             }
         }
     }
