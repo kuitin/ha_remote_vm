@@ -248,22 +248,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startAlert() {
-        try {
-            if(!isWorkScheduled(WORKER_ID)) {
-                startPeriodicWorker()
-                Toast.makeText(this, "Alarm set in 15 minutes", Toast.LENGTH_LONG).show()
-                Log.d("Alarm Bell", "Alarm is set")
-            }
-            else
-            {
-                Toast.makeText(this, "Alarm was already set", Toast.LENGTH_LONG).show()
-                Log.d("Alarm Bell", "Alarm was already set")
-            }
-        } catch (e: ExecutionException ) {
-            e.printStackTrace();
-        } catch (e:InterruptedException ) {
-            e.printStackTrace();
-        }
+        startAutoClean()
     }
 
     private fun startAutoClean() {
@@ -307,7 +292,7 @@ class MainActivity : AppCompatActivity() {
     private fun startPeriodicWorker(){
 
         val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+            .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val myRequest = PeriodicWorkRequest.Builder(
@@ -316,12 +301,13 @@ class MainActivity : AppCompatActivity() {
             TimeUnit.DAYS
         ).setConstraints(constraints)
             .addTag(WORKER_ID)
+            .setInitialDelay(10000 - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
             .build()
 
         WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork(
                 WORKER_ID,
-                ExistingPeriodicWorkPolicy.KEEP,
+                ExistingPeriodicWorkPolicy.REPLACE,
                 myRequest
             )
     }
