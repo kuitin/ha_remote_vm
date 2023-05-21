@@ -2,11 +2,13 @@ package com.ha_remote.clientvm
 
 
 import CleanDataWorker
-import android.annotation.SuppressLint
+import com.ha_remote.clientvm.ui.main.foregroundservice.ForegroundService
 import android.app.*
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.util.Log
@@ -31,7 +33,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
-
+import android.provider.Settings
+import 	android.net.Uri
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(permissions, requestCode)
         }
+        BatteryOptimization()
     }
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         }
         encryptor = EnCryptor()
         decryptor = DeCryptor()
-        saveDatas = getApplicationContext().getExternalFilesDir(null)
+        saveDatas = applicationContext.getExternalFilesDir(null)
             ?.let { SaveDatas(it) }!!
 
         super.onCreate(savedInstanceState)
@@ -297,8 +301,8 @@ class MainActivity : AppCompatActivity() {
 
         val myRequest = PeriodicWorkRequest.Builder(
             CleanDataWorker::class.java,
-            1,
-            TimeUnit.DAYS
+            6,
+            TimeUnit.HOURS
         ).setConstraints(constraints)
             .addTag(WORKER_ID)
             .setInitialDelay(10000 - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
@@ -307,7 +311,7 @@ class MainActivity : AppCompatActivity() {
         WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork(
                 WORKER_ID,
-                ExistingPeriodicWorkPolicy.REPLACE,
+                ExistingPeriodicWorkPolicy.KEEP,
                 myRequest
             )
     }
@@ -330,6 +334,22 @@ class MainActivity : AppCompatActivity() {
 
     fun stopAlert() {
         stopPeriodicWorker()
+    }
+
+    // NOT WORK crash
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    fun BatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val intent = Intent()
+            val packageName = packageName
+            val pm = getSystemService(POWER_SERVICE) as PowerManager
+            if (pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                intent.data = Uri.parse("package:$packageName")
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
     }
 
 }

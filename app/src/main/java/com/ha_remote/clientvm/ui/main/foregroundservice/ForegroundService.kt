@@ -1,5 +1,4 @@
-package com.foregroundservice
-
+package com.ha_remote.clientvm.ui.main.foregroundservice
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
